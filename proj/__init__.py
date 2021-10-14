@@ -1,29 +1,17 @@
 from flask import Flask
+from flask import render_template
 
 def create_app():
     app = Flask(__name__)
 
     @app.route('/')
     def index():
-        return 'hello_world'
+        return render_template('index.html')
 
-    '''Routing Practice'''
-    from flask import jsonify, redirect, url_for
+    @app.errorhandler(404)
+    def page_404(error):
+        return render_template('404.html'), 404
 
-    @app.route('/test/name/<name>')
-    def name(name):
-        return f'Name is {name}'
-
-    @app.route('/test/id/<int:id>')
-    def id(id):
-        return f'ID: {id:d}'
-
-    @app.route('/test/path/<path:subpath>')
-    def path(subpath):
-        return subpath
-
-    @app.route('/test/json')
-    def json():
-        return jsonify({'hello': 'world'})
+    
 
     return app 
