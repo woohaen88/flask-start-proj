@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template
 from flask import redirect, url_for, flash
+from proj.models.user import User as UserModel
+from werkzeug import security
 
 from proj.forms.autho_form import LoginForm, RegisterForm
 
