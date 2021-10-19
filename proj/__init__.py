@@ -12,54 +12,17 @@ def create_app():
     if app.config['DEBUG']:
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 
+    '''Routes INIT'''
+    from .routes import base_route, auth_route
+
+    app.register_blueprint(base_route.bp)
+    app.register_blueprint(auth_route.bp)
+
     '''CSRF INIT'''
-    csrf.init_app(app)
-
-    @app.route('/')
-    def index():
-        return render_template('index.html')
-
-    from .forms.autho_form import LoginForm, RegisterForm
-    
-    @app.route('/auth/login', methods=['GET', 'POST'])
-    def login():
-        form = LoginForm()
-
-        if form.validate_on_submit():
-            user_id = form.data.get('user_id')
-            password = form.data.get('password')
-            return f'{user_id}, {password}'
-
-        else:
-            # Error
-            pass
-
-        return render_template('login.html', form=form)
-
-    @app.route('/auth/register', methods=["GET", "POST"])
-    def register():
-        form = RegisterForm()
-
-        if form.validate_on_submit():
-            user_id = form.data.get('user_id')
-            user_name = form.data.get('user_name')
-            password = form.data.get('password')
-            repassword = form.data.get('repassword')
-            return f'{user_id},{user_name}, {password}, {repassword}'
-
-        else:
-            pass
-
-        return render_template('register.html', form=form)
-
-    @app.route('/auth/logout')
-    def logout():
-        return 'logout'
+    csrf.init_app(app)        
 
     @app.errorhandler(404)
     def page_404(error):
-        return render_template('404.html'), 404
+        return render_template('404.html'), 404    
 
-    
-
-    return app 
+    return app
