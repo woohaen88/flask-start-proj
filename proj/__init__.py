@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, g
 from flask import render_template
 from flask_wtf import CSRFProtect
 from flask_migrate import Migrate
@@ -20,9 +20,6 @@ def create_app():
     if app.config['DEBUG']:
         app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 1
 
-    
-
-
     '''DB INIT'''
     db.init_app(app)
     if app.config['SQLALCHEMY_DATABASE_URI'].startswith('sqlite'):
@@ -39,6 +36,18 @@ def create_app():
 
     '''CSRF INIT'''
     csrf.init_app(app)        
+
+
+    '''REQUEST HOOK'''
+    @app.before_request
+    def before_request():
+        g.db = db.session
+
+    @app.teardown_request
+    def teardown_request(exception):
+        # db.session.close()
+        if hasattr(g, 'db'):
+            g.db.close()
 
     @app.errorhandler(404)
     def page_404(error):
